@@ -21,7 +21,7 @@ import androidx.compose.ui.unit.sp
 import com.utfpr.financeflow.ui.theme.FinanceFlowTheme
 
 @Composable
-fun TransactionValueInput(label: String, value: String, onValueChange: (String) -> Unit) {
+fun TransactionValueInput(label: String, value: String, onValueChange: (String) -> Unit, modifier: Modifier = Modifier) {
     Column(modifier = Modifier.padding(bottom = 16.dp)) {
         Text(
             text = "Adicionar nova transação:",
@@ -33,10 +33,10 @@ fun TransactionValueInput(label: String, value: String, onValueChange: (String) 
         BasicTextField(
             value = value,
             onValueChange = { newValue ->
-                if (newValue.length <= 7) {//verificar de sempre ter o "."
-                    onValueChange(newValue)
-                }
+                if (newValue.length <= 8) { onValueChange(newValue) }
             },
+            modifier = modifier.fillMaxWidth(),
+
             textStyle = TextStyle(
                 fontSize = 40.sp,
                 fontWeight = FontWeight.Bold,
@@ -44,7 +44,6 @@ fun TransactionValueInput(label: String, value: String, onValueChange: (String) 
             ),
             singleLine = true,
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
-            modifier = Modifier.fillMaxWidth(),
             decorationBox = { innerTextField ->
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Text(
@@ -73,7 +72,8 @@ fun TransactionValueInputPreview() {
         TransactionValueInput(
             label = "Valor",
             value = "125.00",
-            onValueChange = {}
+            onValueChange = {},
+            modifier = Modifier
         )
     }
 }

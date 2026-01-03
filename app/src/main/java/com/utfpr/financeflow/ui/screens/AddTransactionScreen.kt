@@ -17,24 +17,31 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.utfpr.financeflow.model.TransactionViewModel
+import com.utfpr.financeflow.ui.components.DatePickerField
+import com.utfpr.financeflow.viewmodel.TransactionViewModel
 import com.utfpr.financeflow.ui.components.TransactionDropdown
 import com.utfpr.financeflow.ui.components.TransactionInputField
 import com.utfpr.financeflow.ui.components.TransactionValueInput
 import com.utfpr.financeflow.ui.theme.FinanceFlowTheme
+import java.time.LocalDate
 
 @Composable
 fun AddTransactionScreen(
     viewModel: TransactionViewModel = viewModel()
 ) {
-    var date by rememberSaveable { mutableStateOf("") }
-    var category by rememberSaveable { mutableStateOf("") }
+    val valueFocusRequester = remember { FocusRequester() }
+    var date by rememberSaveable { mutableStateOf<LocalDate?>(null) }
+    var type by rememberSaveable { mutableStateOf("") }
     var amount by rememberSaveable { mutableStateOf("0.00") }
     var description by rememberSaveable { mutableStateOf("") }
 
@@ -45,34 +52,42 @@ fun AddTransactionScreen(
             .padding(24.dp)
             .verticalScroll(rememberScrollState())
     ) {
-        TransactionValueInput(label = "Valor", value = amount, onValueChange = { amount = it })
-        TransactionDropdown  (label = "Tipo", value = category, options = listOf("RECEITA", "DESPESA"), onValueChange = { category = it })//TODO passar pra ENUM ou banco
-        TransactionInputField(label = "Data do Lançamento:", value = date, onValueChange = { date = it })
+        // TODO - trazer as labels para fora dos compoenentes
+        TransactionValueInput(label = "Valor", value = amount, onValueChange = { amount = it }, modifier = Modifier.focusRequester(valueFocusRequester))
+        TransactionDropdown  (label = "Tipo", value = type, options = listOf("RECEITA", "DESPESA"), onValueChange = { type = it })//TODO passar pra ENUM ou banco
+        DatePickerField(
+            label = "Data do lançamento",
+            date = date,
+            onDateSelected = { date = it }
+        )
+     //   TransactionInputField(label = "Data do Lançamento:", value = date, onValueChange = { date = it })
         TransactionInputField(label = "Descrição:", value = description, onValueChange = { description = it })
 
         Spacer(modifier = Modifier.weight(1f))
 
-        ExpenseActionButtons(
-            onSave = {
-                viewModel.saveTransaction(
-                    date = date,
-                    category = category,
-                    amount = amount,
-                    description = description
-                )
-            },
-            onClear = {
-                date = ""
-                category = ""
-                amount = "0.00"
-                description = ""
-            }//TODO voltar pro primeiro campo no clear e salvar estado qnd volta de extrato
-        )
-    }
+            ExpenseActionButtons(
+                onSave = {
+                    viewModel.saveTransaction(
+                        date = date,
+                        type = type,
+                        amount = amount,
+                        description = description
+                    )
+                    valueFocusRequester.requestFocus()
+                },
+                onClear = {
+                    date = null
+                    type = ""
+                    amount = "0.00"
+                    description = ""
+                    valueFocusRequester.requestFocus() //TODO ver pq nao funciona
+                }
+            )
+        }
 }
 
 @Composable
-fun ExpenseActionButtons(onSave: () -> Unit = {}, onClear: () -> Unit = {}) {
+fun ExpenseActionButtons(onSave: () -> Unit = {}, onClear: () -> Unit = {}) { //TODO trocar nome
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.spacedBy(8.dp)

@@ -1,3 +1,5 @@
+@file:OptIn(ExperimentalMaterial3Api::class)
+
 package com.utfpr.financeflow.ui.components
 
 import androidx.compose.foundation.background
@@ -24,7 +26,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.utfpr.financeflow.ui.theme.FinanceFlowTheme
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun TransactionDropdown(
     label: String,
