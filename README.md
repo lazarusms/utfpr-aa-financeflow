@@ -20,6 +20,7 @@
 - [ ] Componentização da ListTransactionScreen
     - [ ] Extrair `SummaryCard` para um arquivo próprio.
     - [ ] Extrair `TransactionCardSimple` para um arquivo próprio.
+    - [ ] Rever lógicas nestes componentes também.Ppor exemplo passar amount e date já formatados para TransactionCardSimple
 - [ ] Padronizar cores
     - [ ] Substituir cores hardcoded por referências do `MaterialTheme.colorScheme`
 - [ ] Sanitização do Campo de Valor
