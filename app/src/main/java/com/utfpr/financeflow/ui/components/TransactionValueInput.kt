@@ -12,6 +12,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.KeyboardType
@@ -29,7 +30,7 @@ fun TransactionValueInput(label: String, value: String, onValueChange: (String) 
                 if (newValue.length <= 8) { onValueChange(newValue) }
             },
             modifier = modifier.fillMaxWidth(),
-
+            cursorBrush = SolidColor(MaterialTheme.colorScheme.primary),
             textStyle = TextStyle(
                 fontSize = 40.sp,
                 fontWeight = FontWeight.Bold,
