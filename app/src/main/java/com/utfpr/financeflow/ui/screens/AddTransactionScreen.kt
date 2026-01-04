@@ -24,9 +24,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.platform.LocalFocusManager
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.utfpr.financeflow.model.TransactionType
 import com.utfpr.financeflow.ui.components.DatePickerField
 import com.utfpr.financeflow.viewmodel.TransactionViewModel
 import com.utfpr.financeflow.ui.components.TransactionDropdown
@@ -40,10 +43,6 @@ fun AddTransactionScreen(
     viewModel: TransactionViewModel = viewModel()
 ) {
     val valueFocusRequester = remember { FocusRequester() }
-    var date by rememberSaveable { mutableStateOf<LocalDate?>(null) }
-    var type by rememberSaveable { mutableStateOf("") }
-    var amount by rememberSaveable { mutableStateOf("0.00") }
-    var description by rememberSaveable { mutableStateOf("") }
 
     Column(
         modifier = Modifier
@@ -52,35 +51,47 @@ fun AddTransactionScreen(
             .padding(24.dp)
             .verticalScroll(rememberScrollState())
     ) {
-        // TODO - trazer as labels para fora dos compoenentes
-        TransactionValueInput(label = "Valor", value = amount, onValueChange = { amount = it }, modifier = Modifier.focusRequester(valueFocusRequester))
-        TransactionDropdown  (label = "Tipo", value = type, options = listOf("RECEITA", "DESPESA"), onValueChange = { type = it })//TODO passar pra ENUM ou banco
+        Text(
+            text = "Adicionar nova transação:",
+            fontWeight = FontWeight.ExtraBold,
+            fontSize = 18.sp,
+            modifier = Modifier.padding(bottom = 8.dp)
+        )
+        TransactionValueInput(
+            label = "Valor",
+            value = viewModel.amount,
+            onValueChange = { viewModel.amount = it })
+
+        TransactionDropdown (
+            label = "Tipo",
+            value = viewModel.type,
+            options = listOf(TransactionType.RECEITA.description, TransactionType.DESPESA.description),
+            onValueChange = { viewModel.type = it },
+            modifier = Modifier.focusRequester(valueFocusRequester) // passar o foco pro tipo deixa melhor o UX
+        )
+
         DatePickerField(
             label = "Data do lançamento",
-            date = date,
-            onDateSelected = { date = it }
+            date = viewModel.date,
+            onDateSelected = { viewModel.date = it }
         )
-     //   TransactionInputField(label = "Data do Lançamento:", value = date, onValueChange = { date = it })
-        TransactionInputField(label = "Descrição:", value = description, onValueChange = { description = it })
+
+        TransactionInputField(
+            label = "Descrição:",
+            value = viewModel.description,
+            onValueChange = { viewModel.description = it }
+        )
 
         Spacer(modifier = Modifier.weight(1f))
 
             ExpenseActionButtons(
                 onSave = {
-                    viewModel.saveTransaction(
-                        date = date,
-                        type = type,
-                        amount = amount,
-                        description = description
-                    )
+                    viewModel.saveTransaction()
                     valueFocusRequester.requestFocus()
                 },
                 onClear = {
-                    date = null
-                    type = ""
-                    amount = "0.00"
-                    description = ""
-                    valueFocusRequester.requestFocus() //TODO ver pq nao funciona
+                    viewModel.clearFields()
+                    valueFocusRequester.requestFocus()
                 }
             )
         }

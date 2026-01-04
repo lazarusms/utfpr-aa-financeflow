@@ -23,13 +23,6 @@ import com.utfpr.financeflow.ui.theme.FinanceFlowTheme
 @Composable
 fun TransactionValueInput(label: String, value: String, onValueChange: (String) -> Unit, modifier: Modifier = Modifier) {
     Column(modifier = Modifier.padding(bottom = 16.dp)) {
-        Text(
-            text = "Adicionar nova transação:",
-            fontWeight = FontWeight.ExtraBold,
-            fontSize = 18.sp,
-            modifier = Modifier.padding(bottom = 8.dp)
-        )
-
         BasicTextField(
             value = value,
             onValueChange = { newValue ->

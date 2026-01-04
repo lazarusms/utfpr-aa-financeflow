@@ -1,49 +1,93 @@
 package com.utfpr.financeflow.viewmodel
 
+import android.app.Application
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
-import androidx.lifecycle.ViewModel
-import com.utfpr.financeflow.datatemp.TransactionRepository
-import com.utfpr.financeflow.datatemp.TransactionTemp
-import com.utfpr.financeflow.datatemp.TransactionType
+import androidx.lifecycle.AndroidViewModel
+import com.utfpr.financeflow.database.DatabaseHandler
+import com.utfpr.financeflow.model.Transaction
+import com.utfpr.financeflow.model.TransactionType
+import com.utfpr.financeflow.repository.TransactionRepository
 import java.time.LocalDate
 import java.time.YearMonth
-import kotlin.collections.sumOf
+import java.time.format.DateTimeFormatter
+import java.util.Locale
 
-class TransactionViewModel : ViewModel() {
-    private val repository = TransactionRepository()
+// TODO - verificar se ter acesso ao getapplcation aqui é a melhor forma 'getApplication()'
+class TransactionViewModel(application: Application) : AndroidViewModel(application) {
 
-    var selectedMonth by mutableStateOf(YearMonth.now())
+    //dependencias
+    private val dbHandler = DatabaseHandler(application)
+    private val repository = TransactionRepository(dbHandler)
+
+    //estados da UI
+    var amount by mutableStateOf("0.00")
+    var type by mutableStateOf("")
+    var date by mutableStateOf<LocalDate?>(null)
+    var description by mutableStateOf("")
+    var selectedMonth: YearMonth by mutableStateOf(YearMonth.now())
+        private set
+    var transactions by mutableStateOf<List<Transaction>>(emptyList())
         private set
 
-    val transactions: List<TransactionTemp>
-        get() = repository.getTransactions().filter {
-            YearMonth.from(it.date) == selectedMonth
+    // precisa pq nao estamos usando room
+    init {
+        refreshTransactions()
+    }
+
+    val totalExpenses get() = transactions.filter { it.type == TransactionType.DESPESA }.sumOf { it.amount }
+    val totalIncome get() = transactions.filter { it.type == TransactionType.RECEITA }.sumOf { it.amount }
+    val balance get() = totalIncome - totalExpenses
+
+    val formattedMonth
+        get () = selectedMonth.format(
+            DateTimeFormatter.ofPattern(
+                "MMMM yyyy",
+                Locale("pt", "BR")
+            )
+        ).replaceFirstChar { it.uppercase() }
+
+    fun saveTransaction() {
+        val currentAmount = amount.toDoubleOrNull() ?: 0.0
+        val currentDate = date
+
+        if (description.isBlank() || currentAmount <= 0.0 || currentDate == null || type.isBlank()) {
+            return //TODO - criar validações / dá pra retornar mensagem do que está faltando e exibir num dialog
         }
 
-    fun previousMonth() { selectedMonth = selectedMonth.minusMonths(1) }
-    fun nextMonth() { selectedMonth = selectedMonth.plusMonths(1) }
-
-    val totalExpenses
-        get() = transactions.filter { it.type == TransactionType.DESPESA }.sumOf { it.amount }
-
-    val totalIncome
-        get() = transactions.filter { it.type == TransactionType.RECEITA }.sumOf { it.amount }
-
-    val balance
-        get() = totalIncome - totalExpenses
-
-    fun saveTransaction(date: LocalDate?, type: String, amount: String, description: String) {
-        if (date == null) return
-        // TODO - validacoes de dados / retornar msg de erro ?
-        val newTransaction = TransactionTemp(
+        val newTransaction = Transaction(
             description = description,
-            date = date,
-            amount = amount.toDoubleOrNull() ?: 0.0,
+            date = currentDate,
+            amount = currentAmount,
             type = TransactionType.valueOf(type)
         )
 
         repository.addTransaction(newTransaction)
+        refreshTransactions()
+        clearFields()
+    }
+
+    fun refreshTransactions() {
+        transactions = repository.getTransactions().filter {
+            YearMonth.from(it.date) == selectedMonth
+        }
+    }
+
+    fun clearFields() {
+        amount = "0.00"
+        type = ""
+        date = null
+        description = ""
+    }
+
+    fun previousMonth() {
+        selectedMonth = selectedMonth.minusMonths(1)
+        refreshTransactions()
+    }
+
+    fun nextMonth() {
+        selectedMonth = selectedMonth.plusMonths(1)
+        refreshTransactions()
     }
 }

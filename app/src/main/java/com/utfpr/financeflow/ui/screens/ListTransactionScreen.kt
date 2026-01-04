@@ -17,7 +17,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import com.utfpr.financeflow.datatemp.TransactionType
+import com.utfpr.financeflow.model.TransactionType
 import com.utfpr.financeflow.viewmodel.TransactionViewModel
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -25,14 +25,11 @@ import java.util.Locale
 
 @Composable
 fun ListTransactionScreen(viewModel: TransactionViewModel) {
-    val transactions = viewModel.transactions
-    
-    val summaryIncome = viewModel.totalIncome
+    val transactions   = viewModel.transactions
+    val summaryIncome  = viewModel.totalIncome
     val summaryExpense = viewModel.totalExpenses
     val summaryBalance = viewModel.balance
-
-    val monthLabel = viewModel.selectedMonth.format(DateTimeFormatter.ofPattern("MMMM yyyy", Locale("pt", "BR")))
-
+    val monthLabel     = viewModel.formattedMonth
 
     Column(
         modifier = Modifier
@@ -123,7 +120,6 @@ fun ListTransactionScreen(viewModel: TransactionViewModel) {
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                //.verticalScroll(rememberScrollState())
                 .padding(horizontal = 24.dp, vertical = 16.dp),
             verticalArrangement = Arrangement.spacedBy(12.dp)
         ) {

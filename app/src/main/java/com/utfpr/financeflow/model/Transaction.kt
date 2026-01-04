@@ -1,17 +1,11 @@
-package com.utfpr.financeflow.datatemp
+package com.utfpr.financeflow.model
 
 import java.time.LocalDate
-
-// TODO - passar para classe separada o type?
-enum class TransactionType {
-    RECEITA,
-    DESPESA
-}
 
 //classe temporaria pra mockar dados de transação
 // alterar para a correta
 // ter uma pasta model e repository ?
-data class TransactionTemp(
+data class Transaction(
     val description: String,
     val date: LocalDate,
     val amount: Double,
