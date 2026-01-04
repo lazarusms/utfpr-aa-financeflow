@@ -84,7 +84,7 @@ fun AddTransactionScreen(
 
         Spacer(modifier = Modifier.weight(1f))
 
-            ExpenseActionButtons(
+        TransactionActionButtons(
                 onSave = {
                     viewModel.saveTransaction()
                     valueFocusRequester.requestFocus()
@@ -97,8 +97,9 @@ fun AddTransactionScreen(
         }
 }
 
+// deixado aqui por fazer apenas parte dessa tela
 @Composable
-fun ExpenseActionButtons(onSave: () -> Unit = {}, onClear: () -> Unit = {}) { //TODO trocar nome
+fun TransactionActionButtons(onSave: () -> Unit = {}, onClear: () -> Unit = {}) {
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.spacedBy(8.dp)
@@ -133,6 +134,6 @@ fun TransactionPreview() {
 @Composable
 fun TransactionActionButtonsPreview() {
     FinanceFlowTheme {
-        ExpenseActionButtons()
+        TransactionActionButtons()
     }
 }
