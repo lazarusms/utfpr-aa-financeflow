@@ -9,6 +9,7 @@ import com.utfpr.financeflow.database.DatabaseHandler
 import com.utfpr.financeflow.model.Transaction
 import com.utfpr.financeflow.model.TransactionType
 import com.utfpr.financeflow.repository.TransactionRepository
+import java.text.DecimalFormatSymbols
 import java.time.LocalDate
 import java.time.YearMonth
 import java.time.format.DateTimeFormatter
@@ -23,6 +24,7 @@ class TransactionViewModel(application: Application) : AndroidViewModel(applicat
 
     //estados da UI
     var amount by mutableStateOf("0.00")
+
     var type by mutableStateOf("")
     var date by mutableStateOf<LocalDate?>(null)
     var description by mutableStateOf("")
@@ -49,7 +51,11 @@ class TransactionViewModel(application: Application) : AndroidViewModel(applicat
         ).replaceFirstChar { it.uppercase() }
 
     fun saveTransaction() {
-        val currentAmount = amount.toDoubleOrNull() ?: 0.0
+        val sanitizedAmount = amount
+            .replace(".", "")
+            .replace(",", ".")
+
+        val currentAmount = sanitizedAmount.toDoubleOrNull() ?: 0.0
         val currentDate = date
 
         if (description.isBlank() || currentAmount <= 0.0 || currentDate == null || type.isBlank()) {

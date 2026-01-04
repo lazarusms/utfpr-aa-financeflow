@@ -27,7 +27,12 @@ fun TransactionValueInput(label: String, value: String, onValueChange: (String) 
         BasicTextField(
             value = value,
             onValueChange = { newValue ->
-                if (newValue.length <= 8) { onValueChange(newValue) }
+                val cleanValue = newValue.replace(Regex("[^0-9.,]"), "") //permite no maximo , e .
+                //if (cleanValue.count { it == '.' || it == ',' } <= 1) {
+                    if (cleanValue.length <= 8) {
+                        onValueChange(cleanValue)
+                    }
+              //  }
             },
             modifier = modifier.fillMaxWidth(),
             cursorBrush = SolidColor(MaterialTheme.colorScheme.primary),
@@ -37,7 +42,7 @@ fun TransactionValueInput(label: String, value: String, onValueChange: (String) 
                 color = MaterialTheme.colorScheme.primary
             ),
             singleLine = true,
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
             decorationBox = { innerTextField ->
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Text(
