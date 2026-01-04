@@ -16,6 +16,7 @@
 
 ### TODOs
 
+- [ ] Adicionar ícone ao projeto
 - [ ] Componentização da ListTransactionScreen
     - [ ] Extrair `SummaryCard` para um arquivo próprio.
     - [ ] Extrair `TransactionCardSimple` para um arquivo próprio.
