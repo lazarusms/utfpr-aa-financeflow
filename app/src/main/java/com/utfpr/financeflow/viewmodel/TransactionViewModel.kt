@@ -33,7 +33,12 @@ class TransactionViewModel(application: Application) : AndroidViewModel(applicat
     var transactions by mutableStateOf<List<Transaction>>(emptyList())
         private set
 
-    // precisa pq nao estamos usando room
+    var message by mutableStateOf<String?>(null)
+        private set
+
+    var isError by mutableStateOf(false)
+        private set
+
     init {
         refreshTransactions()
     }
@@ -58,13 +63,23 @@ class TransactionViewModel(application: Application) : AndroidViewModel(applicat
         val currentAmount = sanitizedAmount.toDoubleOrNull() ?: 0.0
         val currentDate = date
 
-        if (description.isBlank() || currentAmount <= 0.0 || currentDate == null || type.isBlank()) {
-            return //TODO - criar validações / dá pra retornar mensagem do que está faltando e exibir num dialog
+        val validationError = when {
+            currentAmount <= 0.0 -> "Valor deve ser maior que zero"
+            type.isBlank() -> "Selecione o tipo da transação"
+            currentDate == null -> "Selecione uma data"
+            description.isBlank() -> "Preencha a descrição"
+            else -> null
+        }
+
+        if (validationError != null) {
+            message = validationError
+            isError = true
+            return
         }
 
         val newTransaction = Transaction(
             description = description,
-            date = currentDate,
+            date = currentDate!!,
             amount = currentAmount,
             type = TransactionType.valueOf(type)
         )
@@ -72,7 +87,10 @@ class TransactionViewModel(application: Application) : AndroidViewModel(applicat
         repository.addTransaction(newTransaction)
         refreshTransactions()
         clearFields()
+        message = "Transação salva com sucesso!"
+        isError = false
     }
+
 
     fun refreshTransactions() {
         transactions = repository.getTransactions().filter {
@@ -95,5 +113,9 @@ class TransactionViewModel(application: Application) : AndroidViewModel(applicat
     fun nextMonth() {
         selectedMonth = selectedMonth.plusMonths(1)
         refreshTransactions()
+    }
+
+    fun clearMessage() {
+        message = null
     }
 }

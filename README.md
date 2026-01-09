@@ -3,7 +3,7 @@
 ### PRINCIPAIS
 - [X] Desenvolvimento da tela principal
 - [X] Desenvolvimento da tela de listagem
-- [ ] Consistência dos campos de entrada da tela principal (lançamento) - precisa adicionar validações no saveTransaction() da model
+- [X] Consistência dos campos de entrada da tela principal (lançamento) - precisa adicionar validações no saveTransaction() da model
 - [X] Persistência de dados no banco de dados 
 - [X] Navegabilidade entre telas
 - [X] Organização do código (MVC ou MVVM)
