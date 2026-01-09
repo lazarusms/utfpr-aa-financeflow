@@ -14,6 +14,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Snackbar
+import androidx.compose.material3.SnackbarDuration
 import androidx.compose.material3.SnackbarHost
 import androidx.compose.material3.SnackbarHostState
 import androidx.compose.material3.Text
@@ -45,7 +46,12 @@ fun AddTransactionScreen(
 
     LaunchedEffect(viewModel.message) {
         viewModel.message?.let { msg ->
-            snackbarHostState.showSnackbar(msg)
+            kotlinx.coroutines.withTimeoutOrNull(2000) {//2seg pq usar o short ainda eh mt demorado
+                snackbarHostState.showSnackbar(
+                    message = msg,
+                    duration = SnackbarDuration.Indefinite
+                )
+            }
             viewModel.clearMessage()
         }
     }
@@ -70,7 +76,7 @@ fun AddTransactionScreen(
             TransactionValueInput(
                 label = "Valor",
                 value = viewModel.amount,
-                onValueChange = { viewModel.amount = it }
+                onValueChange = { viewModel.updateAmount(it) }
             )
 
             TransactionDropdown(
@@ -107,7 +113,7 @@ fun AddTransactionScreen(
 
         SnackbarHost(
             hostState = snackbarHostState,
-            modifier = Modifier.padding(bottom = 8.dp)
+            modifier = Modifier.padding(bottom = 8.dp),
         ) { data ->
             Snackbar(
                 snackbarData = data,

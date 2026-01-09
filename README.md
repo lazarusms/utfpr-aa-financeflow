@@ -21,14 +21,12 @@
     - [ ] Extrair `SummaryCard` para um arquivo próprio.
     - [ ] Extrair `TransactionCardSimple` para um arquivo próprio.
     - [ ] Rever lógicas nestes componentes também.Ppor exemplo passar amount e date já formatados para TransactionCardSimple
-- [ ] Padronizar cores
-    - [ ] Substituir cores hardcoded por referências do `MaterialTheme.colorScheme`
-- [ ] Sanitização do Campo de Valor
-    - [ ] Verificar melhor forma de sanitizar o campo - como convertamos para double podemos ter problemas com números como 23300,00 - 23.300,00
-    - [ ] Implementar máscara de entrada para dinheiro (ex: formatar "1000" para "R$ 10,00" em tempo real - verificar como fica com números como 23300,00)
-- [ ] Melhorar as validações que temos na inserção da transação - retornar mensagem par a UI indicando sucesso ou erro 
+- [X] Sanitização do Campo de Valor
+    - [X] Verificar melhor forma de sanitizar o campo - como convertamos para double podemos ter problemas com números como 23300,00 - 23.300,00
+    - [X] Implementar máscara de entrada para dinheiro (ex: formatar "1000" para "R$ 10,00" em tempo real - verificar como fica com números como 23300,00)
+- [X] Melhorar as validações que temos na inserção da transação - retornar mensagem par a UI indicando sucesso ou erro 
 - [ ] Verificar se temos lugares onde está sendo usado os tipos de transaction de forma hardcoded (e não o enum)
-- [ ] Verificar necessidade de padronizar os nomes de componentes
+- [X] Verificar necessidade de padronizar os nomes de componentes
 - [ ] Validar se estamos contemplando o padrão MVVM como esperado (antes da entrega)
 - [ ] SE DER - melhorar a forma como filtramos as transações - trazer tudo filtrado do banco
 - [ ] SE DER - passar a usar LazyColumn no componente que tem a lista de transações

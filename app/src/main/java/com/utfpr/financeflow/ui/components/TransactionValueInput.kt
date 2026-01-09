@@ -22,18 +22,16 @@ import androidx.compose.ui.unit.sp
 import com.utfpr.financeflow.ui.theme.FinanceFlowTheme
 
 @Composable
-fun TransactionValueInput(label: String, value: String, onValueChange: (String) -> Unit, modifier: Modifier = Modifier) {
+fun TransactionValueInput(
+    label: String,
+    value: String,
+    onValueChange: (String) -> Unit,
+    modifier: Modifier = Modifier
+) {
     Column(modifier = Modifier.padding(bottom = 16.dp)) {
         BasicTextField(
             value = value,
-            onValueChange = { newValue ->
-                val cleanValue = newValue.replace(Regex("[^0-9.,]"), "") //permite no maximo , e .
-                //if (cleanValue.count { it == '.' || it == ',' } <= 1) {
-                    if (cleanValue.length <= 8) {
-                        onValueChange(cleanValue)
-                    }
-              //  }
-            },
+            onValueChange = onValueChange,
             modifier = modifier.fillMaxWidth(),
             cursorBrush = SolidColor(MaterialTheme.colorScheme.primary),
             textStyle = TextStyle(
@@ -42,15 +40,23 @@ fun TransactionValueInput(label: String, value: String, onValueChange: (String) 
                 color = MaterialTheme.colorScheme.primary
             ),
             singleLine = true,
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
             decorationBox = { innerTextField ->
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Text(
-                        text = "R$",
+                        text = "R$ ",
                         fontWeight = FontWeight.ExtraBold,
                         fontSize = 40.sp,
                         color = MaterialTheme.colorScheme.primary,
                     )
+                    if (value.isEmpty()) {
+                        Text(
+                            text = "0,00",
+                            fontSize = 40.sp,
+                            fontWeight = FontWeight.Bold,
+                            color = MaterialTheme.colorScheme.primary.copy(alpha = 0.3f)
+                        )
+                    }
                     innerTextField()
                 }
             }
@@ -63,14 +69,13 @@ fun TransactionValueInput(label: String, value: String, onValueChange: (String) 
     }
 }
 
-
 @Preview(showBackground = true)
 @Composable
 fun TransactionValueInputPreview() {
     FinanceFlowTheme {
         TransactionValueInput(
             label = "Valor",
-            value = "125.00",
+            value = "1.234,56",
             onValueChange = {},
             modifier = Modifier
         )

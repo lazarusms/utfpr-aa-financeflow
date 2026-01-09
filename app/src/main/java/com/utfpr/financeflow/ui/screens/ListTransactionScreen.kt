@@ -17,11 +17,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.utfpr.financeflow.model.TransactionType
 import com.utfpr.financeflow.viewmodel.TransactionViewModel
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
-import java.util.Locale
 
 @Composable
 fun ListTransactionScreen(viewModel: TransactionViewModel) {
@@ -82,14 +82,14 @@ fun ListTransactionScreen(viewModel: TransactionViewModel) {
                     horizontalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
                     SummaryCard(
-                        label = "RECEITAS",//TODO mudar cores para um padrão melhor do sistema
-                        value = summaryIncome,
+                        label = TransactionType.RECEITA.description,
+                        value = viewModel.formatCurrency(summaryIncome),
                         containerColor = Color(0xFF2E7D32),
                         modifier = Modifier.weight(1f)
                     )
                     SummaryCard(
-                        label = "DESPESAS",//TODO mudar cores para um padrão melhor do sistema
-                        value = summaryExpense,
+                        label = TransactionType.DESPESA.description,
+                        value = viewModel.formatCurrency(summaryExpense),
                         containerColor = Color(0xFFC62828),
                         modifier = Modifier.weight(1f)
                     )
@@ -107,7 +107,7 @@ fun ListTransactionScreen(viewModel: TransactionViewModel) {
                         Text("SALDO DO MÊS", fontSize = 11.sp, fontWeight = FontWeight.Bold)
                         Spacer(modifier = Modifier.height(4.dp))
                         Text(
-                            text = "R$ %.2f".format(summaryBalance),
+                            text = "R$ ${viewModel.formatCurrency(summaryBalance)}",
                             fontSize = 24.sp,
                             fontWeight = FontWeight.Bold,
                             color = saldoColor
@@ -116,7 +116,7 @@ fun ListTransactionScreen(viewModel: TransactionViewModel) {
                 }
             }
         }
-        //TODO - criar compoenente separado
+
         Column(
             modifier = Modifier
                 .fillMaxSize()
@@ -138,20 +138,20 @@ fun ListTransactionScreen(viewModel: TransactionViewModel) {
                 transactions.forEach { transaction ->
                     TransactionCardSimple(
                         description = transaction.description,
-                        date = transaction.date,
-                        amount = transaction.amount,
-                        isReceita = transaction.type == TransactionType.RECEITA
+                        date = viewModel.formatDate(transaction.date),
+                        amount = viewModel.formatCurrency(transaction.amount),
+                        isIncome = transaction.type == TransactionType.RECEITA
                     )
                 }
             }
         }
     }
 }
-//TODO - criar compoenente separado
+
 @Composable
 fun SummaryCard(
     label: String,
-    value: Double,
+    value: String,
     containerColor: Color,
     modifier: Modifier = Modifier
 ) {
@@ -164,8 +164,8 @@ fun SummaryCard(
             Text(text = label, fontSize = 11.sp, color = Color.White)
             Spacer(modifier = Modifier.height(4.dp))
             Text(
-                text = "R$ %.2f".format(value),
-                fontSize = 16.sp,
+                text = "R$ $value",
+                fontSize = 14.sp,
                 fontWeight = FontWeight.Bold,
                 color = Color.White
             )
@@ -173,19 +173,15 @@ fun SummaryCard(
     }
 }
 
-//TODO - criar compoenente separado
 @Composable
 fun TransactionCardSimple(
     description: String,
-    date: LocalDate,
-    amount: Double,
-    isReceita: Boolean
+    date: String,
+    amount: String,
+    isIncome: Boolean
 ) {
-    val color = if (isReceita) Color(0xFF2E7D32) else Color(0xFFC62828) //TODO mudar cores
+    val color = if (isIncome) Color(0xFF2E7D32) else Color(0xFFC62828)
 
-    val formattedDate = remember(date) {
-        date.format(DateTimeFormatter.ofPattern("dd/MM/yyyy"))
-    }
 
     Card(
         shape = RoundedCornerShape(12.dp),
@@ -200,10 +196,10 @@ fun TransactionCardSimple(
         ) {
             Column(modifier = Modifier.weight(1f)) {
                 Text(description, fontSize = 15.sp, fontWeight = FontWeight.SemiBold)
-                Text(formattedDate, fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
+                Text(date, fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
             }
             Text(
-                text = "${if (isReceita) "+" else "-"} R$ %.2f".format(amount),
+                text = "${if (isIncome) "+" else "-"} R$ $amount",
                 fontSize = 18.sp,
                 fontWeight = FontWeight.Bold,
                 color = color
