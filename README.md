@@ -16,7 +16,7 @@
 
 ### TODOs
 
-- [ ] Adicionar ícone ao projeto
+- [X] Adicionar ícone ao projeto
 - [ ] Componentização da ListTransactionScreen
     - [ ] Extrair `SummaryCard` para um arquivo próprio.
     - [ ] Extrair `TransactionCardSimple` para um arquivo próprio.
@@ -27,7 +27,7 @@
 - [X] Melhorar as validações que temos na inserção da transação - retornar mensagem par a UI indicando sucesso ou erro 
 - [ ] Verificar se temos lugares onde está sendo usado os tipos de transaction de forma hardcoded (e não o enum)
 - [X] Verificar necessidade de padronizar os nomes de componentes
-- [ ] Validar se estamos contemplando o padrão MVVM como esperado (antes da entrega)
+- [X] Validar se estamos contemplando o padrão MVVM como esperado (antes da entrega)
 - [ ] SE DER - melhorar a forma como filtramos as transações - trazer tudo filtrado do banco
 - [ ] SE DER - passar a usar LazyColumn no componente que tem a lista de transações
 - [ ] SE DER - Implementar `@Preview` para todos os componentes criados
