@@ -1,6 +1,5 @@
 package com.utfpr.financeflow.ui.screens
 
-import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.rememberScrollState
@@ -17,11 +16,10 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.utfpr.financeflow.model.TransactionType
+import com.utfpr.financeflow.ui.components.TransactionCardSimple
+import com.utfpr.financeflow.ui.components.TransactionSummaryCard
 import com.utfpr.financeflow.viewmodel.TransactionViewModel
-import java.time.LocalDate
-import java.time.format.DateTimeFormatter
 
 @Composable
 fun ListTransactionScreen(viewModel: TransactionViewModel) {
@@ -81,13 +79,13 @@ fun ListTransactionScreen(viewModel: TransactionViewModel) {
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
-                    SummaryCard(
+                    TransactionSummaryCard(
                         label = TransactionType.RECEITA.description,
                         value = viewModel.formatCurrency(summaryIncome),
                         containerColor = Color(0xFF2E7D32),
                         modifier = Modifier.weight(1f)
                     )
-                    SummaryCard(
+                    TransactionSummaryCard(
                         label = TransactionType.DESPESA.description,
                         value = viewModel.formatCurrency(summaryExpense),
                         containerColor = Color(0xFFC62828),
@@ -97,7 +95,7 @@ fun ListTransactionScreen(viewModel: TransactionViewModel) {
 
                 Spacer(modifier = Modifier.height(12.dp))
 
-                val saldoColor = if (summaryBalance >= 0) Color(0xFF2E7D32) else Color(0xFFC62828)
+                val balanceColor = if (summaryBalance >= 0) Color(0xFF2E7D32) else Color(0xFFC62828)
                 Card(
                     modifier = Modifier.fillMaxWidth(),
                     shape = RoundedCornerShape(12.dp),
@@ -110,7 +108,7 @@ fun ListTransactionScreen(viewModel: TransactionViewModel) {
                             text = "R$ ${viewModel.formatCurrency(summaryBalance)}",
                             fontSize = 24.sp,
                             fontWeight = FontWeight.Bold,
-                            color = saldoColor
+                            color = balanceColor
                         )
                     }
                 }
@@ -144,66 +142,6 @@ fun ListTransactionScreen(viewModel: TransactionViewModel) {
                     )
                 }
             }
-        }
-    }
-}
-
-@Composable
-fun SummaryCard(
-    label: String,
-    value: String,
-    containerColor: Color,
-    modifier: Modifier = Modifier
-) {
-    Card(
-        modifier = modifier,
-        shape = RoundedCornerShape(12.dp),
-        colors = CardDefaults.cardColors(containerColor = containerColor)
-    ) {
-        Column(modifier = Modifier.padding(16.dp)) {
-            Text(text = label, fontSize = 11.sp, color = Color.White)
-            Spacer(modifier = Modifier.height(4.dp))
-            Text(
-                text = "R$ $value",
-                fontSize = 14.sp,
-                fontWeight = FontWeight.Bold,
-                color = Color.White
-            )
-        }
-    }
-}
-
-@Composable
-fun TransactionCardSimple(
-    description: String,
-    date: String,
-    amount: String,
-    isIncome: Boolean
-) {
-    val color = if (isIncome) Color(0xFF2E7D32) else Color(0xFFC62828)
-
-
-    Card(
-        shape = RoundedCornerShape(12.dp),
-        colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surface),
-        border = BorderStroke(1.dp, color),
-        modifier = Modifier.fillMaxWidth()
-    ) {
-        Row(
-            modifier = Modifier.padding(16.dp),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Column(modifier = Modifier.weight(1f)) {
-                Text(description, fontSize = 15.sp, fontWeight = FontWeight.SemiBold)
-                Text(date, fontSize = 12.sp, color = MaterialTheme.colorScheme.onSurfaceVariant)
-            }
-            Text(
-                text = "${if (isIncome) "+" else "-"} R$ $amount",
-                fontSize = 18.sp,
-                fontWeight = FontWeight.Bold,
-                color = color
-            )
         }
     }
 }
